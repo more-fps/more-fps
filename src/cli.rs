@@ -18,21 +18,21 @@ pub struct Cli {
     #[arg(value_parser=output_dne)]
     pub output: PathBuf,
     ///
-    /// AIModel used to generate interpolated frames
+    /// AI Model used to generate intermediate frames
     #[arg(value_parser=is_file, env)]
-    pub interpolation_binary: PathBuf,
+    pub ai_binary: PathBuf,
 
     #[arg(value_parser=is_dir, env)]
-    pub interpolation_model: PathBuf,
+    pub ai_model: PathBuf,
 
-    /// The number target frame count for the interpolation binary
-    /// The default will have the interpolation binary change your (most likely 24fps) video to
+    /// The target frame count for the ai binary
+    /// The default will have the ai binary change your (most likely 24fps) video to
     /// 60fps
     #[arg(long, value_enum, default_value_t=FPS::default())]
     pub fps: FPS,
 
     /// Path to put temporary/intermediate data
-    /// like ffmpeg generated frames and interpolated frames
+    /// like ffmpeg generated frames and ai generated frames
     /// If the path doesn't exist, it will be created
     /// Perferably a fast m.2 ssd or ramdisk because they are fast
     #[arg(short, value_parser=dne_or_is_dir)]
@@ -42,17 +42,17 @@ pub struct Cli {
     #[arg(short='m', default_value_t = NonZeroUsize::new(50).unwrap())]
     pub max_step_size: NonZeroUsize,
 
-    /// Extra args you may want to pass to the interpolation binary
-    #[arg(long, default_value_t = default_interpolation_args())]
-    pub interpolation_args: String,
+    /// Extra args you may want to pass to the ai binary
+    #[arg(long, default_value_t = default_ai_args())]
+    pub ai_args: String,
 
     /// Clears cached data
     #[arg(short='r', default_value_t = ResetData::default())]
     pub reset: ResetData,
 
-    /// How should we split the video up before interpolating
-    /// If there is a big difference between frames, the interpolation
-    /// will generate bad frames.
+    /// Defines how we should split the video up before generating frames
+    /// If there is a big difference between frames, the ai will generate
+    /// bad frames.
     #[arg(short='s', default_value_t = String::from(".2"), value_parser=can_be_decimal)]
     pub scene_gt: String,
 
@@ -104,7 +104,7 @@ fn output_dne(path: &str) -> Result<PathBuf, String> {
     Ok(path)
 }
 
-fn default_interpolation_args() -> String {
+fn default_ai_args() -> String {
     let cpu_count = num_cpus::get();
     format!("-g 0,-1 -j {cpu_count}:{cpu_count},16:32:16")
 }

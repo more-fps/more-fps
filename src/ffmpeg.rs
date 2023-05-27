@@ -133,7 +133,14 @@ impl FfmpegStepper {
             .videos_dir
             .join(format!("{video_number}.{}", self.input_extension));
 
-        // todo figure out windows equivalent of -pattern_type glob!
+        // maybe this will work for windows?
+        #[cfg(target_os="windows")]
+        let args = format!("-y framerate {} -{} -pattern_type sequence -i %08d.png -crf {} -c:v libx264 -pix_fmt yuv420p {}",
+            self.fps,
+            self.crf,
+            video_path.display()
+        );
+        #[cfg(not(target_os="windows"))]
         let args = format!("-y -framerate {} -pattern_type glob -i '*.png' -crf {} -c:v libx264 -pix_fmt yuv420p {}",
             self.fps,
             self.crf,

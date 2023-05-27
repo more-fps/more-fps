@@ -13,15 +13,15 @@ pub enum Error {
     FfprobeCommand,
     #[error("Failed to execute ffmpeg")]
     FfmpegCommand,
-    #[error("Failed to execute interpolation command")]
-    InterpolationCommand,
+    #[error("Failed to execute AI command")]
+    AICommand,
     #[error("Command parse failure: {0}")]
     ParseError(#[from] shell_words::ParseError),
     #[error("Decimal error: {0}")]
     Decimal(#[from] rust_decimal::Error),
     #[error("Unable to create scene time ranges:\nstart {0}\nmax_step_size {1}\nend {2}")]
     UnableToCreateTimeRanges(Decimal, NonZeroUsize, Decimal),
-    #[error("Unable to calculate expected interpolation frame count from FPS: {0}")]
+    #[error("Unable to calculate expected frame count from FPS: {0}")]
     BadFPS(NonZeroUsize),
     #[error("Multiplcation overflow: {0} * {1}")]
     MultiplicationOverflow(String, String),

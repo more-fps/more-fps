@@ -1,6 +1,6 @@
 # More FPS
 
-Using an AI model that can interpolate frames, we can make our videos smoother.
+Using an AI model that can generate intermediate frames, we can make our videos smoother.
 
 This project is aimed to automate the process.
 
@@ -27,29 +27,34 @@ cargo install more-fps
 ## Usage:
 
 First we need to set a few environment variables (use the correct path):
-- `INTERPOLATION_MODEL`
+- `AI_MODEL`
   - The path to the model folder
-- `INTERPOLATION_BINARY`
-  - The path to the interpolation binary (which is a file!)
+- `AI_BINARY`
+  - The path to the AI binary (which is a file!)
 
 As an example, assuming the ai model and binary are in your current directory:
 
 ### Linux:
 ```
-export INTERPOLATION_MODEL=models/rife-v4.6
-export INTERPOLATION_BINARY=rife-ncnn-vulkan
+export AI_MODEL=models/rife-v4.6
+export AI_BINARY=rife-ncnn-vulkan
 more-fps -t /tmp/more_fps/ input.mkv output.mkv
 ```
 
 ### Windows:
 
-TODO
+Command Prompt:
+```
+set AI_MODEL=models/rife-v4.6
+set AI_BINARY=rife-ncnn-vulkan
+```
 
+TODO: Full windows command
 
 ---
 
 ```
-Usage: more-fps [OPTIONS] -t <TEMP_DIR> <INPUT> <OUTPUT> <INTERPOLATION_BINARY> <INTERPOLATION_MODEL>
+Usage: more-fps [OPTIONS] -t <TEMP_DIR> <INPUT> <OUTPUT> <AI_BINARY> <AI_MODEL>
 
 Arguments:
   <INPUT>
@@ -58,17 +63,17 @@ Arguments:
   <OUTPUT>
           final output path if it exists, we'll try to build on-top of it
 
-  <INTERPOLATION_BINARY>
-          AIModel used to generate interpolated frames
+  <AI_BINARY>
+          AI Model used to generate intermediate frames
           
-          [env: INTERPOLATION_BINARY=]
+          [env: AI_BINARY=]
 
-  <INTERPOLATION_MODEL>
-          [env: INTERPOLATION_MODEL=]
+  <AI_MODEL>
+          [env: AI_MODEL=]
 
 Options:
       --fps <FPS>
-          The number target frame count for the interpolation binary The default will have the interpolation binary change your (most likely 24fps) video to 60fps
+          The target frame count for the ai binary The default will have the ai binary change your (most likely 24fps) video to 60fps
           
           [default: sixty]
 
@@ -76,15 +81,15 @@ Options:
           - sixty: 60 fps
 
   -t <TEMP_DIR>
-          Path to put temporary/intermediate data like ffmpeg generated frames and interpolated frames If the path doesn't exist, it will be created Perferably a fast m.2 ssd or ramdisk because they are fast
+          Path to put temporary/intermediate data like ffmpeg generated frames and ai generated frames If the path doesn't exist, it will be created Perferably a fast m.2 ssd or ramdisk because they are fast
 
   -m <MAX_STEP_SIZE>
           Maximum number of seconds to extract (assuming the scene splits are too big)
           
           [default: 50]
 
-      --interpolation-args <INTERPOLATION_ARGS>
-          Extra args you may want to pass to the interpolation binary
+      --ai-args <AI_ARGS>
+          Extra args you may want to pass to the ai binary
           
           [default: "-g 0,-1 -j 8:8,16:32:16"]
 
@@ -94,11 +99,11 @@ Options:
           [default: everything]
 
           Possible values:
-          - everything: Delete the entire temp_directory which contains a few building blocks: "ffmpeg" - used for storing extracted frames "interpolation" - used for storing interpolated frames "scene_data.txt" - holds scene timestamps
+          - everything: Delete the entire temp_directory which contains a few building blocks: "ffmpeg" - used for storing extracted frames "generated_frames" - used for storing generated frames "scene_data.txt" - holds scene timestamps
           - nothing:    Nothing will be deleted... meaning we try to continue from where we left off
 
   -s <SCENE_GT>
-          How should we split the video up before interpolating If there is a big difference between frames, the interpolation will generate bad frames
+          Defines how we should split the video up before generating frames If there is a big difference between frames, the ai will generate bad frames
           
           [default: .2]
 
@@ -121,8 +126,8 @@ Options:
 
 1. Identify the video's scene changes
 1. Extract frames
-1. Interpolate frames to match the target FPS (default: 60)
-1. Aggregate the interpolated frames into a new video
+1. Generate frames to match the target FPS (default: 60)
+1. Aggregate the generated frames into a new video
 1. Include audio + subtitle from the original video
 
 ### Identify the scene changes
@@ -145,15 +150,15 @@ So instead of extracting all of the frames, we extract according to the interval
 
 *These time intervals may still be very large... To avoid hitting the capacity of the disk, I set a default MAX_STEP_SIZE. This option is used to set a limit on the number of seconds a frame extraction will use at a time.*
 
-### Interpolate the frames to match the target FPS
+### Generate the frames to match the target FPS
 
 This is where the AI model is used. We need a model that supports the "-n" option mentioned above so we can tell the model how many frames to generate per frame extraction. 
 
 The simplest example is if we have 1 second (which is usually 23.998 aka 24 fps), the AI model will be told to generate 60 frames. Not all scene cuts are this nice, so decimals are involved...
 
-*⚠️ I assume you have one CPU and GPU you want to use... If this is not the case, feel free to change the `--interpolation-args` option*
+*⚠️ I assume you have one CPU and GPU you want to use... If this is not the case, feel free to change the `--ai-args` option*
 
-### Aggregate the interpolated frames
+### Aggregate the generated frames
 
 Now that we have the AI generated frames, we use ffmpeg to generate the video.
 
@@ -177,6 +182,5 @@ If you're looking to support me, you can send any amount of Monero:
   - cli should include preset setting so we can target ultrafast/veryslow
     - https://trac.ffmpeg.org/wiki/Encode/H.264#Preset
   - support higher FPS like 75, 90, 120, 144, 165, 180, 240, etc.
-  - put this on crates.io so we can `cargo install`
   - support windows
 

@@ -1,7 +1,7 @@
 [package]
 name = "more-fps"
-version = "0.1.0"
-description = "more-fps: Using an AI model that can interpolate frames, we can make our videos smoother."
+version = "0.1.1"
+description = "more-fps: Using an AI model that can generate intermediate frames, we can make our videos smoother."
 license = "MIT"
 edition = "2021"
 

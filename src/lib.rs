@@ -12,8 +12,8 @@ pub use ffmpeg::FfmpegStepper;
 mod fps;
 pub use fps::FPS;
 
-mod interpolation;
-pub use interpolation::Interpolation;
+mod frame_generator;
+pub use frame_generator::FrameGenerator;
 
 mod non_zero_decimal;
 pub use non_zero_decimal::NonZeroDecimal;

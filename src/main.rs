@@ -3,7 +3,7 @@ use log::{debug, info};
 use more_fps::Cli;
 use more_fps::Error;
 use more_fps::FfmpegStepper;
-use more_fps::Interpolation;
+use more_fps::FrameGenerator;
 use more_fps::ReusableTempDir;
 
 fn main() -> Result<(), Error> {
@@ -19,13 +19,13 @@ fn main() -> Result<(), Error> {
         args.fps.non_zero_usize(),
     )?;
 
-    let interpolation = Interpolation {
-        binary: &args.interpolation_binary,
-        model: &args.interpolation_model,
+    let frame_generator = FrameGenerator {
+        binary: &args.ai_binary,
+        model: &args.ai_model,
         fps: args.fps,
         input_dir: ffmpeg_stepper.frames_dir(),
-        extra_args: &args.interpolation_args,
-        output_dir: temp_dir.interpolation_dir(),
+        extra_args: &args.ai_args,
+        output_dir: temp_dir.generated_frames_dir(),
     };
 
     let time_ranges = ffmpeg_stepper
@@ -38,10 +38,10 @@ fn main() -> Result<(), Error> {
         let duration = time_range.duration();
 
         ffmpeg_stepper.extract_frames(&time_range)?;
-        let interpolated_frames_dir = interpolation.execute(duration)?.to_owned();
-        ffmpeg_stepper.frames_to_video(index, interpolated_frames_dir)?;
-        info!(
-            "Extracting a total of {} seconds",
+        let generated_frames_dir = frame_generator.execute(duration)?.to_owned();
+        ffmpeg_stepper.frames_to_video(index, generated_frames_dir)?;
+        println!(
+            "Extracted a total of {} seconds",
             time_range.start + *duration
         );
         //pause();
