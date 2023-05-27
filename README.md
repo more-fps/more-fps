@@ -20,9 +20,8 @@ This project is aimed to automate the process.
 
 Install [rust](https://www.rust-lang.org/tools/install)
 
-Clone the repo and build the project:
 ```
-cargo b --release
+cargo install more-fps
 ```
 
 ## Usage:
@@ -39,7 +38,7 @@ As an example, assuming the ai model and binary are in your current directory:
 ```
 export INTERPOLATION_MODEL=models/rife-v4.6
 export INTERPOLATION_BINARY=rife-ncnn-vulkan
-RUST_LOG=INFO cargo run --release -- -t /tmp/more_fps/ input.mkv output.mkv
+more-fps -t /tmp/more_fps/ input.mkv output.mkv
 ```
 
 ### Windows:
