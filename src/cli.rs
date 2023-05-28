@@ -53,7 +53,7 @@ pub struct Cli {
     /// Defines how we should split the video up before generating frames
     /// If there is a big difference between frames, the ai will generate
     /// bad frames.
-    #[arg(short='s', default_value_t = String::from(".2"), value_parser=can_be_decimal)]
+    #[arg(short='s', default_value_t = String::from(".1"), value_parser=can_be_decimal)]
     pub scene_gt: String,
 
     /// https://trac.ffmpeg.org/wiki/Encode/H.264#a1.ChooseaCRFvalue

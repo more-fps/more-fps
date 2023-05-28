@@ -18,11 +18,16 @@ pub struct FrameGenerator<'a> {
 }
 
 impl<'a> FrameGenerator<'a> {
-    pub fn execute(&self, duration: NonZeroDecimal) -> Result<&Path, Error> {
+    pub fn clear_output_dir(&self) -> Result<(), Error> {
         if self.output_dir.exists() {
             fs::remove_dir_all(self.output_dir)?;
             fs::create_dir_all(self.output_dir)?;
         }
+        Ok(())
+    }
+    pub fn execute(&self, duration: NonZeroDecimal) -> Result<&Path, Error> {
+        self.clear_output_dir()?;
+
         let frame_count = self.frame_count(duration)?;
         let args = format!(
             "-m {} -i {} -o {} -n {frame_count} {}",

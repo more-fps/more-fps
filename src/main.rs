@@ -28,24 +28,28 @@ fn main() -> Result<(), Error> {
         output_dir: temp_dir.generated_frames_dir(),
     };
 
+    info!("Extracting scene data to file...");
     let time_ranges = ffmpeg_stepper
         .flattened_time_ranges(args.max_step_size, &args.scene_gt)?
         .into_iter()
         .enumerate();
     let existing_video_count = ffmpeg_stepper.existing_video_count()?;
 
+    info!("Beginning extraction + video creation process");
     for (index, time_range) in time_ranges.skip(existing_video_count) {
         let duration = time_range.duration();
 
         ffmpeg_stepper.extract_frames(&time_range)?;
         let generated_frames_dir = frame_generator.execute(duration)?.to_owned();
         ffmpeg_stepper.frames_to_video(index, generated_frames_dir)?;
-        println!(
+        info!(
             "Extracted a total of {} seconds",
             time_range.start + *duration
         );
         //pause();
     }
+    ffmpeg_stepper.clear_frames_dir()?;
+    frame_generator.clear_output_dir()?;
 
     info!("Finished extracting ALL frames, now creating the final video");
     ffmpeg_stepper.aggregate(&args.output)?;

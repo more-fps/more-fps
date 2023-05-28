@@ -111,11 +111,16 @@ impl FfmpegStepper {
         Ok(flattened_time_ranges)
     }
 
-    pub fn extract_frames(&self, time_range: &TimeRange) -> Result<&Path, Error> {
+    pub fn clear_frames_dir(&self) -> Result<(), Error> {
         if self.frames_dir.exists() {
             fs::remove_dir_all(&self.frames_dir)?;
             fs::create_dir_all(&self.frames_dir)?;
         }
+        Ok(())
+    }
+
+    pub fn extract_frames(&self, time_range: &TimeRange) -> Result<&Path, Error> {
+        self.clear_frames_dir()?;
 
         extract_frames(
             &time_range.start,

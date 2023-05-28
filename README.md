@@ -38,7 +38,7 @@ As an example, assuming the ai model and binary are in your current directory:
 ```
 export AI_MODEL=models/rife-v4.6
 export AI_BINARY=rife-ncnn-vulkan
-more-fps -t /tmp/more_fps/ input.mkv output.mkv
+RUST_LOG=info more-fps -t /tmp/more_fps/ input.mkv output.mkv
 ```
 
 ### Windows:
@@ -105,7 +105,7 @@ Options:
   -s <SCENE_GT>
           Defines how we should split the video up before generating frames If there is a big difference between frames, the ai will generate bad frames
           
-          [default: .2]
+          [default: .1]
 
       --crf <CRF>
           https://trac.ffmpeg.org/wiki/Encode/H.264#a1.ChooseaCRFvalue
