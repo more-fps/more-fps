@@ -1,3 +1,7 @@
+# ⚠️ This project is not ready for use 
+
+There's still an issue with audio (because we don't generate the exact number of frames) AND generating bad frames
+
 # More FPS
 
 Using an AI model that can generate intermediate frames, we can make our videos smoother.

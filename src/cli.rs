@@ -105,6 +105,8 @@ fn output_dne(path: &str) -> Result<PathBuf, String> {
 }
 
 fn default_ai_args() -> String {
-    let cpu_count = num_cpus::get();
+    // not using all of the CPUs to avoid getting bad decoding/endcoding when system is under
+    // stress
+    let cpu_count = num_cpus::get() - 1;
     format!("-g 0,-1 -j {cpu_count}:{cpu_count},16:32:16")
 }
