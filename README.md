@@ -183,4 +183,6 @@ If you're looking to support me, you can send any amount of Monero:
     - https://trac.ffmpeg.org/wiki/Encode/H.264#Preset
   - support higher FPS like 75, 90, 120, 144, 165, 180, 240, etc.
   - support windows
+  - use the scene text file to figure out which intervals to extract
+    - check time range of each video file to make sure it's long enough. Canceling the program at the wrong time could create a shorter video (BUG)
 
